@@ -86,6 +86,40 @@ Choose one primary mode:
    console output, storage value, or browser state needed to explain the issue.
    Redact secrets, tokens, PII, and third-party data.
 
+## Comparison Matrix
+
+For auth, authorization, and business logic, compare states deliberately instead
+of relying on one account:
+
+| Boundary | Compare |
+| --- | --- |
+| Authentication | anonymous, logged in, logged out, expired session, revoked token |
+| Role | standard user, privileged user, admin, support/service account |
+| Tenant | tenant A owner, tenant A member, tenant B member, invited user |
+| Object ownership | owner, collaborator, non-owner, deleted/archived object |
+| API shape | UI request, direct API request, alternate method, batch request |
+| Lifecycle | before approval, after approval, after downgrade, after deletion |
+| Client state | fresh profile, cached state, service worker state, mobile viewport |
+
+Record which states were actually tested. Avoid claiming a boundary is safe when
+only the happy path was observed.
+
+## Triage Ladder
+
+Use this order when the target is broad:
+
+1. Map the app, roles, session model, APIs, storage, and high-impact workflows.
+2. Test authorization on object reads, writes, downloads, exports, and admin
+   actions.
+3. Inspect login, reset, MFA, session refresh, logout, invite, and account-link
+   flows.
+4. Review APIs, GraphQL, WebSockets, CORS, rate limits, and schema exposure.
+5. Inspect uploads, imports, exports, URL fetchers, previews, and generated
+   files.
+6. Review client-side boundaries: DOM sinks, postMessage, CSP, service workers,
+   source maps, storage, and third-party scripts.
+7. Review business logic, automation abuse, and AI/agent/tool boundaries.
+
 ## CDP Fallback
 
 Use CDP when browser use cannot answer a specific question. Prefer a temporary
@@ -108,6 +142,10 @@ Reach for CDP to:
 Do not use CDP to bypass scope, hide activity, defeat consent boundaries, or run
 high-volume automation against live systems. If the needed test materially
 increases impact, return to `engagement-scope` before proceeding.
+
+Before escalating to CDP, state the specific question CDP will answer. After
+using it, summarize the exact added evidence, such as "captured WebSocket
+authorization failure" or "verified service worker cached private response."
 
 ## Test Areas
 
@@ -216,6 +254,25 @@ Treat a finding as confirmed only when the inspection can explain:
   expected versus actual behavior.
 
 Use `Potential` or `Needs validation` when any of these links is missing.
+
+## Evidence Artifacts
+
+Prefer compact, reproducible artifacts:
+
+- Browser path: starting URL, navigation steps, role/account state, and visible
+  outcome.
+- HTTP evidence: method, endpoint, redacted headers, redacted body, status,
+  response excerpt, and side effect.
+- State evidence: cookies and storage names only unless values are essential and
+  safely redacted; session age; feature flags; tenant/object IDs created for the
+  test.
+- Console/runtime evidence: relevant errors, source map or bundle references,
+  CSP violations, service worker/cache facts, and WebSocket frame summaries.
+- Negative control: the same action failing for an unauthorized state, or the
+  same object succeeding for its owner.
+
+Do not include full tokens, cookies, PII, third-party data, large response
+bodies, or high-volume logs in the final report.
 
 ## Output Format
 
