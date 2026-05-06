@@ -1,0 +1,4 @@
+interface:
+  display_name: "Binary Debugging"
+  short_description: "Debug binaries and crashes."
+  default_prompt: "Use $binary-debugging to inspect authorized binaries, crashes, cores, runtime state, memory, registers, symbols, and debugger evidence for triage and remediation."

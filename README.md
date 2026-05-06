@@ -29,7 +29,7 @@ To avoid account usage violations:
 2. code-vulnerability-review
 3. web-app-security-inspection
 4. cve-research
-5. fuzz-harness-builder
-6. binary-debugging
-7. binary-reversing
+5. binary-debugging
+6. binary-reversing
+7. fuzz-harness-builder
 8. exploit-chain-analysis
