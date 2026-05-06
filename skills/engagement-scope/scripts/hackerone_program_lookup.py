@@ -4,17 +4,23 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import re
 import sys
 import textwrap
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from typing import Any
 
 
 GRAPHQL_URL = "https://hackerone.com/graphql"
+CACHE_SCHEMA_VERSION = 1
+DEFAULT_CACHE_TTL_SECONDS = 6 * 60 * 60
 
 QUERY = """
 query PublicProgramScope(
@@ -111,6 +117,107 @@ def normalize_handle(value: str) -> str:
     return raw
 
 
+def default_cache_dir() -> Path:
+    override = os.environ.get("ATTACK_SCOPE_CACHE_DIR")
+    if override:
+        return Path(override).expanduser()
+
+    codex_home = os.environ.get("CODEX_HOME")
+    if codex_home:
+        return Path(codex_home).expanduser() / "cache" / "codex-attack" / "engagement-scope"
+
+    return Path.home() / ".codex" / "cache" / "codex-attack" / "engagement-scope"
+
+
+def parse_cache_ttl(value: str | None) -> int:
+    if value is None or value == "":
+        return DEFAULT_CACHE_TTL_SECONDS
+    try:
+        ttl = int(value)
+    except ValueError as exc:
+        raise ValueError("cache TTL must be an integer number of seconds") from exc
+    if ttl < 0:
+        raise ValueError("cache TTL must be zero or greater")
+    return ttl
+
+
+def iso_utc(timestamp: float) -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(timestamp))
+
+
+def make_cache_key(params: dict[str, Any]) -> str:
+    encoded = json.dumps(params, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()[:24]
+
+
+def cache_path_for(cache_dir: Path, params: dict[str, Any]) -> Path:
+    handle = params["handle"]
+    return cache_dir / "hackerone" / f"{handle}-{make_cache_key(params)}.json"
+
+
+def load_cached_program(
+    cache_path: Path, cache_ttl: int
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    if cache_ttl <= 0:
+        return None
+    try:
+        with cache_path.open("r", encoding="utf-8") as handle:
+            record = json.load(handle)
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return None
+
+    if record.get("schema_version") != CACHE_SCHEMA_VERSION:
+        return None
+    fetched_at = float(record.get("fetched_at") or 0)
+    age_seconds = max(0, int(time.time() - fetched_at))
+    if age_seconds > cache_ttl:
+        return None
+
+    program = record.get("program")
+    if not isinstance(program, dict):
+        return None
+
+    return program, {
+        "status": "hit",
+        "path": str(cache_path),
+        "fetched_at": iso_utc(fetched_at),
+        "age_seconds": age_seconds,
+        "ttl_seconds": cache_ttl,
+    }
+
+
+def write_cached_program(cache_path: Path, program: dict[str, Any]) -> dict[str, Any]:
+    fetched_at = time.time()
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = cache_path.with_suffix(cache_path.suffix + ".tmp")
+    record = {
+        "schema_version": CACHE_SCHEMA_VERSION,
+        "fetched_at": fetched_at,
+        "program": program,
+    }
+    with tmp_path.open("w", encoding="utf-8") as handle:
+        json.dump(record, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+    os.replace(tmp_path, cache_path)
+    return {
+        "status": "refresh",
+        "path": str(cache_path),
+        "fetched_at": iso_utc(fetched_at),
+        "age_seconds": 0,
+        "ttl_seconds": None,
+    }
+
+
+def annotate_cache(program: dict[str, Any], cache_status: dict[str, Any] | None) -> dict[str, Any]:
+    if not cache_status:
+        return program
+    annotated = dict(program)
+    source = dict(annotated.get("source") or {})
+    source["cache"] = cache_status
+    annotated["source"] = source
+    return annotated
+
+
 def graphql_request(
     handle: str,
     offset: int,
@@ -153,7 +260,7 @@ def graphql_request(
         raise RuntimeError(f"could not reach HackerOne: {exc}") from exc
 
 
-def fetch_program(
+def fetch_program_live(
     handle: str,
     *,
     limit: int,
@@ -182,9 +289,9 @@ def fetch_program(
     if team is None:
         raise RuntimeError(f"no public HackerOne program found for handle: {handle}")
 
-    search = team.get("structured_scopes_search") or {}
-    nodes = list(search.get("nodes") or [])
-    total = int(search.get("total_count") or len(nodes))
+    scope_search = team.get("structured_scopes_search") or {}
+    nodes = list(scope_search.get("nodes") or [])
+    total = int(scope_search.get("total_count") or len(nodes))
 
     if fetch_all and len(nodes) < total:
         offset = len(nodes)
@@ -225,6 +332,59 @@ def fetch_program(
         "note": "Best-effort public lookup. Verify current scope on the official program page before testing.",
     }
     return team
+
+
+def lookup_program(
+    handle: str,
+    *,
+    limit: int,
+    page_size: int,
+    fetch_all: bool,
+    timeout: int,
+    search: str | None,
+    eligible_for_submission: bool | None,
+    eligible_for_bounty: bool | None,
+    cache_dir: Path,
+    cache_ttl: int,
+    refresh: bool,
+    no_cache: bool,
+) -> dict[str, Any]:
+    cache_params = {
+        "schema_version": CACHE_SCHEMA_VERSION,
+        "source": "hackerone-graphql",
+        "handle": handle,
+        "limit": None if fetch_all else limit,
+        "fetch_all": fetch_all,
+        "search": search,
+        "eligible_for_submission": eligible_for_submission,
+        "eligible_for_bounty": eligible_for_bounty,
+    }
+    cache_path = cache_path_for(cache_dir, cache_params)
+
+    if not no_cache and not refresh:
+        cached = load_cached_program(cache_path, cache_ttl)
+        if cached is not None:
+            program, cache_status = cached
+            return annotate_cache(program, cache_status)
+
+    program = fetch_program_live(
+        handle,
+        limit=limit,
+        page_size=page_size,
+        fetch_all=fetch_all,
+        timeout=timeout,
+        search=search,
+        eligible_for_submission=eligible_for_submission,
+        eligible_for_bounty=eligible_for_bounty,
+    )
+
+    if no_cache:
+        cache_status = {"status": "disabled"}
+    else:
+        cache_status = write_cached_program(cache_path, program)
+        cache_status["ttl_seconds"] = cache_ttl
+
+    return annotate_cache(program, cache_status)
 
 
 def parse_optional_bool(value: str) -> bool | None:
@@ -283,6 +443,14 @@ def render_markdown(program: dict[str, Any], policy_chars: int) -> str:
         f"- Structured scopes shown: {len(scopes)} of "
         f"{program.get('structured_scope_total_count', len(scopes))}",
     ]
+    cache = (program.get("source") or {}).get("cache")
+    if cache:
+        lines.append(
+            "- Cache: "
+            f"{cache.get('status')}"
+            + (f" from `{cache.get('path')}`" if cache.get("path") else "")
+            + (f", fetched {cache.get('fetched_at')}" if cache.get("fetched_at") else "")
+        )
 
     exclusions = declarative.get("scope_exclusions") or []
     if exclusions:
@@ -342,6 +510,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--all", action="store_true", help="fetch all structured scopes")
     parser.add_argument("--page-size", type=int, default=100, help="page size for --all")
     parser.add_argument("--timeout", type=int, default=20, help="request timeout in seconds")
+    parser.add_argument(
+        "--cache-dir",
+        default=str(default_cache_dir()),
+        help="directory for persistent cache files",
+    )
+    parser.add_argument(
+        "--cache-ttl",
+        type=int,
+        default=parse_cache_ttl(os.environ.get("ATTACK_SCOPE_CACHE_TTL")),
+        help="cache freshness window in seconds; 0 disables cache reads",
+    )
+    parser.add_argument("--refresh", action="store_true", help="ignore cache and fetch fresh data")
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="disable cache reads and writes for this lookup",
+    )
     parser.add_argument("--search", help="filter structured scopes by search text")
     parser.add_argument(
         "--eligible-for-submission",
@@ -371,7 +556,9 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("--limit must be at least 1")
         if args.page_size < 1:
             raise ValueError("--page-size must be at least 1")
-        program = fetch_program(
+        if args.cache_ttl < 0:
+            raise ValueError("--cache-ttl must be zero or greater")
+        program = lookup_program(
             handle,
             limit=args.limit,
             page_size=args.page_size,
@@ -380,6 +567,10 @@ def main(argv: list[str] | None = None) -> int:
             search=args.search,
             eligible_for_submission=args.eligible_for_submission,
             eligible_for_bounty=args.eligible_for_bounty,
+            cache_dir=Path(args.cache_dir).expanduser(),
+            cache_ttl=args.cache_ttl,
+            refresh=args.refresh,
+            no_cache=args.no_cache,
         )
         if args.format == "markdown":
             sys.stdout.write(render_markdown(program, args.policy_chars))

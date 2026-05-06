@@ -16,6 +16,7 @@ Never treat a brand-owned domain, subsidiary, ASN, repository, package, or mobil
 
 - Program page pattern: `https://hackerone.com/<handle>?type=team`
 - Use `scripts/hackerone_program_lookup.py` for public GraphQL lookup when a handle is known.
+- The lookup script caches public results for 6 hours by default under the Codex cache directory. Use `--refresh` for current verification and include cache status in the engagement brief.
 - HackerOne's authenticated Hacker API also has structured scope and scope exclusion endpoints, but it requires an API username and token.
 - HackerOne scope fields to preserve: `eligible_for_submission`, `eligible_for_bounty`, asset identifier, asset type, max severity, asset instructions, scope exclusions, safe harbor, submission state, and policy change timestamp.
 

@@ -48,9 +48,12 @@ For HackerOne public programs, use `scripts/hackerone_program_lookup.py` when a 
 python scripts/hackerone_program_lookup.py <handle> --format markdown --eligible-for-submission yes --limit 50
 python scripts/hackerone_program_lookup.py <handle> --format markdown --search <asset-or-domain> --limit 20
 python scripts/hackerone_program_lookup.py <handle> --format json --all
+python scripts/hackerone_program_lookup.py <handle> --refresh --format markdown --eligible-for-submission yes
 ```
 
 Use `--eligible-for-submission yes` to focus on testable assets, `--eligible-for-bounty yes` to focus on bounty-eligible assets, and `--search` for a specific domain, repository, app, or package. Treat the script as a best-effort public lookup through HackerOne's current GraphQL surface; verify important decisions against the official program page at `https://hackerone.com/<handle>?type=team`.
+
+The HackerOne script uses a persistent cache by default to avoid repeated scope pulls across conversations. Default cache location is `$CODEX_HOME/cache/codex-attack/engagement-scope` when `CODEX_HOME` is set, otherwise `~/.codex/cache/codex-attack/engagement-scope`. Default TTL is 6 hours. Use `--refresh` before active testing, when the user asks for current scope, or when cache metadata is older than the engagement requires. Use `--no-cache` for one-off uncached reads, `--cache-dir` to isolate a cache, or `ATTACK_SCOPE_CACHE_DIR` / `ATTACK_SCOPE_CACHE_TTL` to change defaults.
 
 For Bugcrowd, Intigriti, YesWeHack, and major direct programs, read `references/bounty-scope-sources.md` only when needed. Use it to find official scope pages and to decide what evidence to capture.
 
@@ -60,7 +63,7 @@ Before routing, summarize the working frame in compact form:
 
 ```text
 Authorized context: <what establishes permission or what remains unknown>
-Scope evidence: <official program URL, API/script result, date checked, policy version/change date>
+Scope evidence: <official program URL, API/script result, cache hit/refresh, date checked, policy version/change date>
 Target assets: <repos, apps, hosts, binaries, versions, files, accounts>
 In scope: <allowed systems, code paths, vulnerability classes, techniques>
 Out of scope: <systems, data, techniques, timing, impact limits>
