@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web App Security Inspection"
+  short_description: "Inspect live or local web apps."
+  default_prompt: "Use $web-app-security-inspection to inspect an authorized web application through browser-visible behavior, HTTP flows, sessions, APIs, and client-side security boundaries."
