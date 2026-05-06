@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fuzz Harness Builder"
+  short_description: "Build selective fuzz harnesses."
+  default_prompt: "Use $fuzz-harness-builder to decide whether fuzzing is worth the cost, then build, run, and triage authorized fuzz harnesses with sanitizers, corpora, dictionaries, and coverage evidence."
