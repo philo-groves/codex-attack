@@ -1,0 +1,4 @@
+interface:
+  display_name: "Binary Reversing"
+  short_description: "Reverse engineer binaries."
+  default_prompt: "Use $binary-reversing to statically analyze authorized binaries, recover structure and behavior, identify protocols, strings, imports, config, obfuscation, and security-relevant logic."
