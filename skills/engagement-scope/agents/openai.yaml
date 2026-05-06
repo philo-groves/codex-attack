@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engagement Scope"
+  short_description: "Frame authorized cyber work before using ATTACK skills."
+  default_prompt: "Use engagement-scope to confirm authorization, define boundaries, and route this cyber task to the right ATTACK skill."
