@@ -32,4 +32,6 @@ To avoid account usage violations:
 5. binary-debugging
 6. binary-reversing
 7. fuzz-harness-builder
-8. exploit-chain-analysis
+8. finding-tracker
+9. triage-verifier
+10. exploit-chain-analysis

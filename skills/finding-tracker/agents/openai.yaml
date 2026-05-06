@@ -1,0 +1,4 @@
+interface:
+  display_name: "Finding Tracker"
+  short_description: "Track security finding states."
+  default_prompt: "Use $finding-tracker to maintain centralized security finding state, check duplicates, record milestones, and update discovered, confident, proofed, or de-escalated findings."
