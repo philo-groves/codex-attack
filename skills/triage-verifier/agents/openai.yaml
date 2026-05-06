@@ -1,0 +1,4 @@
+interface:
+  display_name: "Triage Verifier"
+  short_description: "Verify findings before proofed."
+  default_prompt: "Use $triage-verifier after a confident finding reaches the end of its research chain to verify reproduction, strengthen PoCs, and decide whether it is proofed or should be de-escalated."
