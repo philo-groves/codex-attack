@@ -55,6 +55,7 @@ def bullet(items: list[str]) -> str:
 def packet_text(args: argparse.Namespace) -> str:
     poc = bullet(args.poc or ["not provided"])
     evidence = bullet(args.evidence)
+    chain_steps = bullet(args.chain_step or ["not applicable"])
     negative = bullet(args.negative_control)
     constraints = bullet(args.constraints)
     cleanup = bullet(args.cleanup or ["not applicable or not provided"])
@@ -93,6 +94,10 @@ Outcome: {args.outcome}
 
 {evidence}
 
+## Chain Steps
+
+{chain_steps}
+
 ## Negative Controls
 
 {negative}
@@ -126,6 +131,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--actual", required=True)
     parser.add_argument("--impact", required=True)
     parser.add_argument("--evidence", action="append", required=True)
+    parser.add_argument("--chain-step", action="append")
     parser.add_argument("--negative-control", action="append", required=True)
     parser.add_argument("--constraints", action="append", required=True)
     parser.add_argument("--poc", action="append")

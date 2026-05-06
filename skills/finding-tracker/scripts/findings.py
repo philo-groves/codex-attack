@@ -34,6 +34,17 @@ def norm(text: str | None) -> str:
     return (text or "").strip()
 
 
+def unique(items: list[str] | None) -> list[str]:
+    seen = set()
+    out = []
+    for item in items or []:
+        value = norm(item)
+        if value and value not in seen:
+            seen.add(value)
+            out.append(value)
+    return out
+
+
 def load(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {"schema_version": SCHEMA_VERSION, "updated_at": now(), "findings": []}
@@ -67,6 +78,7 @@ def finding_text(finding: dict[str, Any]) -> str:
         finding.get("target", ""),
         " ".join(finding.get("locations", [])),
         " ".join(finding.get("evidence", [])),
+        " ".join(finding.get("related_ids", [])),
     ]
     return " ".join(str(part) for part in parts if part)
 
@@ -81,6 +93,7 @@ def score_candidate(query: dict[str, Any], finding: dict[str, Any]) -> float:
             query.get("target", ""),
             " ".join(query.get("locations", [])),
             " ".join(query.get("evidence", [])),
+            " ".join(query.get("related_ids", [])),
         ]
         if part
     )
@@ -155,6 +168,8 @@ def print_finding(finding: dict[str, Any]) -> None:
     print(f"  category: {finding.get('category') or '-'}")
     if finding.get("locations"):
         print(f"  locations: {', '.join(finding['locations'])}")
+    if finding.get("related_ids"):
+        print(f"  related: {', '.join(finding['related_ids'])}")
     if finding.get("summary"):
         print(f"  summary: {finding['summary']}")
     if finding.get("duplicate_of"):
@@ -213,6 +228,7 @@ def query_from_args(args: argparse.Namespace) -> dict[str, Any]:
         "category": norm(args.category),
         "locations": args.location or [],
         "evidence": args.evidence or [],
+        "related_ids": unique(getattr(args, "related", None)),
     }
 
 
@@ -261,6 +277,7 @@ def cmd_add(args: argparse.Namespace) -> int:
         "category": query["category"],
         "locations": query["locations"],
         "evidence": query["evidence"],
+        "related_ids": query["related_ids"],
         "severity": norm(args.severity),
         "confidence": norm(args.confidence),
         "duplicate_of": args.duplicate_of,
@@ -312,6 +329,11 @@ def cmd_update(args: argparse.Namespace) -> int:
         for loc in args.location:
             if loc not in existing:
                 existing.append(loc)
+    if args.related:
+        existing = finding.setdefault("related_ids", [])
+        for related_id in unique(args.related):
+            if related_id not in existing:
+                existing.append(related_id)
     if args.severity is not None:
         finding["severity"] = args.severity
     if args.confidence is not None:
@@ -356,6 +378,7 @@ def add_query_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--category", default="", help="finding category")
     parser.add_argument("--location", action="append", help="affected location/surface")
     parser.add_argument("--evidence", action="append", help="short evidence reference")
+    parser.add_argument("--related", action="append", help="related finding ID")
 
 
 def main(argv: list[str]) -> int:
@@ -401,6 +424,7 @@ def main(argv: list[str]) -> int:
     p.add_argument("--category")
     p.add_argument("--location", action="append")
     p.add_argument("--evidence", action="append")
+    p.add_argument("--related", action="append")
     p.add_argument("--severity")
     p.add_argument("--confidence")
     p.set_defaults(func=cmd_update)

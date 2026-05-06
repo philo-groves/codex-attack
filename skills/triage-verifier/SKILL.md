@@ -1,6 +1,6 @@
 ---
 name: triage-verifier
-description: Verify confident security findings before they are marked proofed. Use when a finding has reached the `confident` state in finding-tracker and the current research chain has ended or plateaued, or when Codex needs to harden, rewrite, reproduce, package, or sanity-check a PoC for a bug bounty, audit, advisory, crash, CVE exposure, web/API issue, source-code finding, binary finding, or fuzzing result. Do not interrupt productive investigation; use this as the proof gate before updating a finding to `proofed`.
+description: Verify confident security findings before they are marked proofed. Use when a finding has reached the `confident` state in finding-tracker and the current research chain has ended or plateaued, or when Codex needs to harden, rewrite, reproduce, package, or sanity-check a PoC for a bug bounty, audit, advisory, crash, CVE exposure, web/API issue, source-code finding, binary finding, fuzzing result, or exploit-chain finding. Do not interrupt productive investigation; use this as the proof gate before updating a finding to `proofed`.
 ---
 
 # Triage Verifier
@@ -15,6 +15,10 @@ A finding is proofed only when it is reproduced, proven, or otherwise undeniable
 from a triager's perspective. The standard is not "the agent believes it"; the
 standard is "a skeptical security triager can follow the evidence and accept the
 issue, impact, and affected boundary."
+
+Exploit-chain findings follow the same proof gate. Individual proofed component
+findings do not automatically proof the chain; the verifier must see that the
+combined path works or is otherwise undeniable.
 
 ## Proof Gate
 
@@ -73,6 +77,7 @@ python3 <skill-dir>/scripts/proof_packet.py \
   --actual "Response is 200 with tenant A invoice PDF metadata." \
   --impact "Cross-tenant invoice disclosure." \
   --evidence "redacted request/response pair in notes" \
+  --chain-step "Optional: F-0003 postcondition feeds F-0007 precondition" \
   --negative-control "Logged-out request returns 401; tenant A owner request succeeds." \
   --constraints "Requires authenticated standard user." \
   --poc "scripts/repro_invoice_export.py"
@@ -104,8 +109,10 @@ If verification fails, add a milestone or de-escalate instead of forcing
    changes when the guard, patch, owner, tenant, role, config, or input changes.
 6. Rewrite the PoC for a triager. Make it minimal, deterministic, redacted,
    scoped, and self-checking.
-7. Decide outcome. Proof, return for more work, de-escalate, merge, or split.
-8. Update `finding-tracker` with proof reference, milestone, or de-escalation.
+7. For exploit chains, prove the composition: show each link's precondition,
+   primitive, postcondition, and the exact point where one link feeds the next.
+8. Decide outcome. Proof, return for more work, de-escalate, merge, or split.
+9. Update `finding-tracker` with proof reference, milestone, or de-escalation.
 
 ## PoC Standards
 
@@ -148,6 +155,10 @@ Rewrite weak PoCs until they are triager-friendly:
   vendor source, compensating controls, and environment reachability.
 - AI/tool boundary: include untrusted content source, model/tool decision point,
   server-side policy check, exact tool/API effect, and tenant/secret boundary.
+- Exploit chain: include chain finding ID, related finding IDs, chain packet,
+  step preconditions and postconditions, end-to-end reproduction or undeniable
+  composition proof, negative controls for broken links, escalated impact, and
+  cleanup/blast-radius limits.
 
 ## De-escalation Triggers
 
@@ -163,6 +174,8 @@ De-escalate when:
 - The dependency or product version is not affected.
 - The PoC requires out-of-scope impact or assumptions the engagement does not
   allow.
+- For exploit chains, an individual link is real but the links do not compose or
+  the combined impact is not materially greater than an existing finding.
 
 Record the debunking evidence in `finding-tracker`; do not just abandon the
 finding.
@@ -190,5 +203,6 @@ Keep proof packets and final reports concise, redacted, and reproducible.
 Use `finding-tracker` to update state and milestones. Return to
 `web-app-security-inspection`, `code-vulnerability-review`, `binary-debugging`,
 `binary-reversing`, `fuzz-harness-builder`, or `cve-research` when verification
-finds a specific missing proof element. Use `exploit-chain-analysis` only for
-authorized lab-only chaining after individual findings are proofed.
+finds a specific missing proof element. Use `exploit-chain-analysis` when a
+chain proof fails because composition, impact escalation, or related-finding
+structure needs more work.

@@ -24,7 +24,9 @@ Every finding must be exactly one of:
 - `de-escalated`: potential bug was debunked at any point.
 
 Do not delete de-escalated findings during normal work. They prevent future
-agents from rediscovering and re-testing the same false lead.
+agents from rediscovering and re-testing the same false lead. They may also
+become useful context for `exploit-chain-analysis` when another finding changes
+the preconditions that originally blocked the lead.
 
 ## Required Discipline
 
@@ -79,6 +81,21 @@ python3 <skill-dir>/scripts/findings.py milestone F-0001 \
   --note "Added negative control with logged-out user."
 ```
 
+Exploit chains are tracked as normal findings with category `exploit-chain` and
+`--related` IDs for every component finding or de-escalated lead:
+
+```bash
+python3 <skill-dir>/scripts/findings.py add \
+  --title "Upload metadata to admin import SSRF chain" \
+  --target "admin.example.com" \
+  --category "exploit-chain" \
+  --related F-0003 \
+  --related F-0007 \
+  --related F-0002 \
+  --summary "Upload metadata primitive may feed admin import SSRF sink." \
+  --evidence "data/exploit-chains/upload-admin-import-ssrf-chain.md"
+```
+
 The script defaults to `data/findings.json`; pass `--file <path>` to use a
 different tracker for tests or unusual workspaces.
 
@@ -95,6 +112,8 @@ Keep entries compact and useful:
 - Summary: current hypothesis or confirmed issue.
 - Evidence: short references to requests, code lines, traces, crashes,
   screenshots, logs, or verifier results. Redact secrets and PII.
+- Related IDs: finding IDs that share context, form an exploit chain, or explain
+  why a de-escalated lead matters to a new chain hypothesis.
 - Milestones: chronological notes that explain how the finding changed.
 
 Do not store raw tokens, full cookies, private keys, customer data, exploit
@@ -127,6 +146,10 @@ the symptom differs. Examples:
 Treat as separate findings when the root cause, affected boundary, required
 privilege, tenant/account impact, or fix path is materially different.
 
+Treat exploit chains as separate findings when the combination creates materially
+greater impact than the component findings. If the chain does not increase
+impact, add a milestone to the strongest existing finding instead.
+
 When unsure, keep one finding and add milestones until evidence proves a split is
 useful.
 
@@ -138,7 +161,8 @@ At handoff, include finding IDs and current states so the next skill or agent ca
 continue without redoing discovery.
 
 `proofed` is reserved for `triage-verifier`; this skill records proof results but
-does not perform that verification itself.
+does not perform that verification itself. Exploit-chain findings also require a
+`triage-verifier` proof reference before they can become `proofed`.
 
 ## Output Format
 
