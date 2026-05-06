@@ -1,6 +1,6 @@
-# Codex ATTACK
+# Codex Cyber Skills
 
-`Armed Tactical Trusted Access for Cyber Kit (ATTACK)`
+Reusable cyber workflow skills for authorized security research.
 
 A plugin intended to maximize the cyber capabilities of Codex, intended for verified members of the Trusted Access for Cyber (TAC) program. Verified members are granted access to more lax models with less cyber guardrails. 
 

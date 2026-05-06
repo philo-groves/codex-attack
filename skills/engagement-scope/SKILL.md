@@ -1,11 +1,11 @@
 ---
 name: engagement-scope
-description: Establish authorized engagement context, look up public bounty scope evidence, and route ATTACK cyber tasks before using specialized skills. Use for any request to model security boundaries, review code vulnerabilities, inspect web or mobile apps, research CVEs, build fuzzers, reverse or debug binaries, or analyze exploit chains, especially when target authorization, bounty program scope, impact tolerance, or the desired deliverable is unclear.
+description: Establish authorized engagement context, look up public bounty scope evidence, and route cyber tasks before using specialized skills. Use for any request to model security boundaries, review code vulnerabilities, inspect web or mobile apps, research CVEs, build fuzzers, reverse or debug binaries, or analyze exploit chains, especially when target authorization, bounty program scope, impact tolerance, or the desired deliverable is unclear.
 ---
 
 # Engagement Scope
 
-Use this skill as the first stop for ATTACK workflows. Define what is authorized, what is in scope, what level of impact is acceptable, and which specialized skill should carry the work forward.
+Use this skill as the first stop for scoped cyber workflows. Define what is authorized, what is in scope, what level of impact is acceptable, and which specialized skill should carry the work forward.
 
 ## Scope Workflow
 
@@ -37,23 +37,45 @@ When a user mentions a public bounty platform, program handle, or official VRP, 
 Source priority:
 
 1. User-provided private invitation, contract, rules of engagement, or current program brief.
-2. Official platform program page or official platform API for the named program.
-3. Official company security, bounty, or vulnerability disclosure page.
-4. Official `security.txt` as a lead when no program page is known.
-5. Third-party directories, public writeups, or search snippets as discovery leads only.
+2. Curated program metadata in the open workspace's `data/` directory, validated by this skill's `references/program-scope.v1.schema.json`.
+3. Disposable fetch cache in the open workspace's `data/.cache/`, only as a freshness/performance aid.
+4. Official platform program page or official platform API for the named program.
+5. Official company security, bounty, or vulnerability disclosure page.
+6. Official `security.txt` as a lead when no program page is known.
+7. Third-party directories, public writeups, or search snippets as discovery leads only.
 
-For HackerOne public programs, use `scripts/hackerone_program_lookup.py` when a handle is known. Resolve the script path relative to this skill directory:
+Program data belongs to the active target workspace. Expect one bounty or disclosure program per workspace. A scalable workspace layout is:
+
+```text
+data/
+  program.yaml
+  sources.yaml
+  products/
+  subprograms/
+  scope/
+  .cache/
+```
+
+Use `program.yaml` for the workspace's top-level program record. Use `products/` or `subprograms/` for large direct programs such as Apple Security Bounty or MSRC when product-specific rules diverge. Keep raw fetched pages, API responses, and query results in `data/.cache/` and do not treat cache files as curated scope authority.
+
+For HackerOne public programs, use `scripts/hackerone_program_lookup.py` when a handle is known. Resolve the script path relative to this skill directory and run it from the active target workspace:
 
 ```bash
-python scripts/hackerone_program_lookup.py <handle> --format markdown --eligible-for-submission yes --limit 50
-python scripts/hackerone_program_lookup.py <handle> --format markdown --search <asset-or-domain> --limit 20
-python scripts/hackerone_program_lookup.py <handle> --format json --all
-python scripts/hackerone_program_lookup.py <handle> --refresh --format markdown --eligible-for-submission yes
+python <skill-dir>/scripts/hackerone_program_lookup.py <handle> --format markdown --eligible-for-submission yes --limit 50
+python <skill-dir>/scripts/hackerone_program_lookup.py <handle> --format markdown --search <asset-or-domain> --limit 20
+python <skill-dir>/scripts/hackerone_program_lookup.py <handle> --format json --all
+python <skill-dir>/scripts/hackerone_program_lookup.py <handle> --refresh --format markdown --eligible-for-submission yes
 ```
 
 Use `--eligible-for-submission yes` to focus on testable assets, `--eligible-for-bounty yes` to focus on bounty-eligible assets, and `--search` for a specific domain, repository, app, or package. Treat the script as a best-effort public lookup through HackerOne's current GraphQL surface; verify important decisions against the official program page at `https://hackerone.com/<handle>?type=team`.
 
-The HackerOne script uses a persistent cache by default to avoid repeated scope pulls across conversations. Default cache location is `$CODEX_HOME/cache/codex-attack/engagement-scope` when `CODEX_HOME` is set, otherwise `~/.codex/cache/codex-attack/engagement-scope`. Default TTL is 6 hours. Use `--refresh` before active testing, when the user asks for current scope, or when cache metadata is older than the engagement requires. Use `--no-cache` for one-off uncached reads, `--cache-dir` to isolate a cache, or `ATTACK_SCOPE_CACHE_DIR` / `ATTACK_SCOPE_CACHE_TTL` to change defaults.
+The HackerOne script uses a persistent workspace-local cache by default to avoid repeated scope pulls across conversations. Default cache location is `data/.cache/hackerone/` under the current working directory. Default TTL is 6 hours. Use `--refresh` before active testing, when the user asks for current scope, or when cache metadata is older than the engagement requires. Use `--no-cache` for one-off uncached reads, `--cache-dir` to isolate a cache, or `SCOPE_CACHE_DIR` / `SCOPE_CACHE_TTL` to change defaults.
+
+Validate curated workspace records with:
+
+```bash
+python <skill-dir>/scripts/validate_program_records.py --data-dir data
+```
 
 For Bugcrowd, Intigriti, YesWeHack, and major direct programs, read `references/bounty-scope-sources.md` only when needed. Use it to find official scope pages and to decide what evidence to capture.
 
@@ -70,7 +92,7 @@ Out of scope: <systems, data, techniques, timing, impact limits>
 Objective: <review, reproduce, fuzz, reverse, debug, research, report>
 Impact tolerance: <read-only, local-only, low-rate live testing, invasive lab testing>
 Deliverable: <findings, patch, PoC-in-lab, harness, threat model, report>
-Next skill: <specialized ATTACK skill>
+Next skill: <specialized skill>
 ```
 
 Use `unknown` sparingly. If an unknown affects safety or execution, ask before proceeding.
@@ -105,4 +127,4 @@ If enough information is already available, do not ask a ritual preflight. State
 
 ## Handoff
 
-When another ATTACK skill is used after this one, pass along the engagement brief and the immediate task. Keep the brief visible enough that later work does not drift from authorization, boundaries, and deliverable expectations.
+When another specialized skill is used after this one, pass along the engagement brief and the immediate task. Keep the brief visible enough that later work does not drift from authorization, boundaries, and deliverable expectations.

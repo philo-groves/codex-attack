@@ -2,13 +2,17 @@
 
 Use this reference when a target appears to be covered by a public bug bounty, vulnerability disclosure, or coordinated vulnerability disclosure program. Always verify live program scope before testing; these URLs are lookup starting points, not cached authorization.
 
+Store curated program metadata in the open target workspace's `data/` directory. Expect one bounty or disclosure program per workspace.
+
 ## Source Priority
 
 1. User-provided private invitation, contract, rules of engagement, or current program brief.
-2. Official platform program page or official platform API for the named program.
-3. Official company security, bounty, or vulnerability disclosure page.
-4. Official `security.txt` at `https://<domain>/.well-known/security.txt`.
-5. Search results, public writeups, program directories, or third-party aggregators as leads only.
+2. Curated workspace-local program metadata in `data/`.
+3. Workspace-local disposable fetch cache in `data/.cache/`.
+4. Official platform program page or official platform API for the named program.
+5. Official company security, bounty, or vulnerability disclosure page.
+6. Official `security.txt` at `https://<domain>/.well-known/security.txt`.
+7. Search results, public writeups, program directories, or third-party aggregators as leads only.
 
 Never treat a brand-owned domain, subsidiary, ASN, repository, package, or mobile app as in scope unless the official program says so. If a scope page says only listed assets are in scope, do not infer neighboring assets.
 
@@ -16,7 +20,7 @@ Never treat a brand-owned domain, subsidiary, ASN, repository, package, or mobil
 
 - Program page pattern: `https://hackerone.com/<handle>?type=team`
 - Use `scripts/hackerone_program_lookup.py` for public GraphQL lookup when a handle is known.
-- The lookup script caches public results for 6 hours by default under the Codex cache directory. Use `--refresh` for current verification and include cache status in the engagement brief.
+- The lookup script caches public results for 6 hours by default under the active workspace's `data/.cache/hackerone/`. Use `--refresh` for current verification and include cache status in the engagement brief.
 - HackerOne's authenticated Hacker API also has structured scope and scope exclusion endpoints, but it requires an API username and token.
 - HackerOne scope fields to preserve: `eligible_for_submission`, `eligible_for_bounty`, asset identifier, asset type, max severity, asset instructions, scope exclusions, safe harbor, submission state, and policy change timestamp.
 

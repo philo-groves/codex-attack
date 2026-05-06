@@ -118,15 +118,11 @@ def normalize_handle(value: str) -> str:
 
 
 def default_cache_dir() -> Path:
-    override = os.environ.get("ATTACK_SCOPE_CACHE_DIR")
+    override = os.environ.get("SCOPE_CACHE_DIR")
     if override:
         return Path(override).expanduser()
 
-    codex_home = os.environ.get("CODEX_HOME")
-    if codex_home:
-        return Path(codex_home).expanduser() / "cache" / "codex-attack" / "engagement-scope"
-
-    return Path.home() / ".codex" / "cache" / "codex-attack" / "engagement-scope"
+    return Path.cwd() / "data" / ".cache" / "hackerone"
 
 
 def parse_cache_ttl(value: str | None) -> int:
@@ -152,7 +148,7 @@ def make_cache_key(params: dict[str, Any]) -> str:
 
 def cache_path_for(cache_dir: Path, params: dict[str, Any]) -> Path:
     handle = params["handle"]
-    return cache_dir / "hackerone" / f"{handle}-{make_cache_key(params)}.json"
+    return cache_dir / f"{handle}-{make_cache_key(params)}.json"
 
 
 def load_cached_program(
@@ -245,7 +241,7 @@ def graphql_request(
         headers={
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "codex-attack-engagement-scope/0.1",
+            "User-Agent": "scope-lookup/0.1",
             "X-Requested-With": "XMLHttpRequest",
         },
         method="POST",
@@ -513,12 +509,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--cache-dir",
         default=str(default_cache_dir()),
-        help="directory for persistent cache files",
+        help="directory for persistent cache files; defaults to workspace data/.cache/hackerone",
     )
     parser.add_argument(
         "--cache-ttl",
         type=int,
-        default=parse_cache_ttl(os.environ.get("ATTACK_SCOPE_CACHE_TTL")),
+        default=parse_cache_ttl(os.environ.get("SCOPE_CACHE_TTL")),
         help="cache freshness window in seconds; 0 disables cache reads",
     )
     parser.add_argument("--refresh", action="store_true", help="ignore cache and fetch fresh data")
