@@ -1,0 +1,41 @@
+{
+  "name": "codex-attack",
+  "version": "0.1.0",
+  "description": "Advanced cyber research workflows for Trusted Access for Cyber members.",
+  "author": {
+    "name": "Codex ATTACK Contributors"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "attack",
+    "cyber",
+    "security",
+    "tac",
+    "vulnerability-research",
+    "bug-bounty",
+    "triage",
+    "reporting",
+    "vulnerability-disclosure"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex ATTACK",
+    "shortDescription": "Advanced cyber research workflows for TAC members",
+    "longDescription": "Codex ATTACK packages skills for scoped security engagements: scope modeling, source and web review, CVE research, binary reversing and debugging, selective fuzz harnessing, finding tracking, triage verification, exploit-chain analysis, and report writing. Use only on authorized targets with Trusted Access for Cyber permissions.",
+    "developerName": "Codex ATTACK Contributors",
+    "category": "Security",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Establish scope and review this target.",
+      "Perform chain analysis of known findings.",
+      "Write a submission-ready report."
+    ],
+    "brandColor": "#B91C1C",
+    "screenshots": []
+  }
+}

@@ -205,4 +205,6 @@ Use `finding-tracker` to update state and milestones. Return to
 `binary-reversing`, `fuzz-harness-builder`, or `cve-research` when verification
 finds a specific missing proof element. Use `exploit-chain-analysis` when a
 chain proof fails because composition, impact escalation, or related-finding
-structure needs more work.
+structure needs more work. Use `report-writer` after proofing when the user
+needs a bounty submission, advisory draft, internal triage report, or remediation
+handoff.
