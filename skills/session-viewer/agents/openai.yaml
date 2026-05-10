@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Viewer"
+  short_description: "Launch live HTML research views."
+  default_prompt: "Use $session-viewer to launch and maintain an in-agent-browser HTML monitor for substantial security research, active findings, escalations, de-escalations, blockers, and next actions."

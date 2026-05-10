@@ -160,6 +160,10 @@ active` to see current work. During review, use `search` before adding leads.
 At handoff, include finding IDs and current states so the next skill or agent can
 continue without redoing discovery.
 
+If `session-viewer` is active for the workspace, run its `sync-findings` command
+immediately after any state update so escalations and de-escalations are visible
+in the HTML session monitor.
+
 `proofed` is reserved for `triage-verifier`; this skill records proof results but
 does not perform that verification itself. Exploit-chain findings also require a
 `triage-verifier` proof reference before they can become `proofed`.
