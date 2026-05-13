@@ -16,11 +16,6 @@ Use this skill as the first stop for scoped cyber workflows. Define what is auth
 5. Produce a short engagement brief before handing off to a specialized skill.
 6. Re-check scope before any step that would materially increase impact, touch live external systems, attempt exploitation, collect sensitive data, or alter target state.
 
-For substantial workflows, also start `session-viewer` after the engagement
-brief so the in-agent browser shows active findings, transitions, blockers, and
-next actions during the session. Skip it only for quick one-off work or when the
-user asks not to maintain a browser view.
-
 ## Authorization Check
 
 Proceed when there is a clear authorized context, such as:
@@ -108,7 +103,6 @@ When scope comes from a public bounty program, include exact asset identifiers o
 
 Route to one primary skill. Mention secondary skills only when they are likely to be needed later.
 
-- Use `session-viewer` alongside the primary skill for substantial long-running research so state changes are visible in the in-agent browser.
 - Use `code-vulnerability-review` for source-code audits, insecure patterns, dependency risk, data-flow review, patch review, and remediation planning.
 - Use `web-app-security-inspection` for browser-visible behavior, HTTP flows, authentication, authorization, API testing, session handling, and live or local web apps.
 - Use `cve-research` for vulnerability intelligence, affected-version checks, exploitability analysis from public sources, and advisory triage.
