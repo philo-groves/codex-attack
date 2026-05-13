@@ -1,4 +1,4 @@
 interface:
   display_name: "Report Writer"
   short_description: "Write submission-ready vulnerability reports."
-  default_prompt: "Use $report-writer to turn proofed findings, verifier evidence, and diagrams into a concise vulnerability report with repro steps, impact, severity, remediation, and attachments."
+  default_prompt: "Use $report-writer to turn proofed findings, verifier evidence, triage-theater PoC artifacts, and diagrams into a concise vulnerability report with repro steps, impact, severity, remediation, and attachments."

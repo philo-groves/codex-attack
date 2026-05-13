@@ -107,16 +107,17 @@ If verification fails, add a milestone or de-escalate instead of forcing
    minimal input, and one variable changed at a time.
 5. Add negative controls. Show what should fail, what should succeed, and what
    changes when the guard, patch, owner, tenant, role, config, or input changes.
-6. Rewrite the PoC for a triager. Make it minimal, deterministic, redacted,
-   scoped, and self-checking.
+6. Rewrite the PoC for verification. Make it minimal, deterministic, redacted,
+   scoped, and self-checking. Leave screen-recordable human packaging to
+   `triage-theater` after proofing.
 7. For exploit chains, prove the composition: show each link's precondition,
    primitive, postcondition, and the exact point where one link feeds the next.
 8. Decide outcome. Proof, return for more work, de-escalate, merge, or split.
 9. Update `finding-tracker` with proof reference, milestone, or de-escalation.
 
-## PoC Standards
+## Verifier PoC Standards
 
-A passable PoC should:
+A passable verifier PoC should:
 
 - Be scoped to authorized assets and test data.
 - State setup, accounts/roles, target version/build, environment, and cleanup.
@@ -130,7 +131,7 @@ A passable PoC should:
 - Fail closed with clear messages when preconditions are missing.
 - Leave the target state unchanged or include safe cleanup steps.
 
-Rewrite weak PoCs until they are triager-friendly:
+Rewrite weak PoCs until they are verification-friendly:
 
 - Replace vague prose with exact commands, requests, inputs, or UI steps.
 - Replace screenshots-only evidence with request/response or runtime facts when
@@ -193,7 +194,7 @@ Impact: <validated impact and limits>
 PoC quality: <passable / rewritten / still weak, with reason>
 Proof reference: <path or verifier artifact, if proofed>
 Tracker update: <state/milestone update performed or needed>
-Next action: <none / return to skill / patch / report / de-escalate>
+Next action: <none / triage-theater / return to skill / patch / report / de-escalate>
 ```
 
 Keep proof packets and final reports concise, redacted, and reproducible.
@@ -205,6 +206,7 @@ Use `finding-tracker` to update state and milestones. Return to
 `binary-reversing`, `fuzz-harness-builder`, or `cve-research` when verification
 finds a specific missing proof element. Use `exploit-chain-analysis` when a
 chain proof fails because composition, impact escalation, or related-finding
-structure needs more work. Use `report-writer` after proofing when the user
-needs a bounty submission, advisory draft, internal triage report, or remediation
-handoff.
+structure needs more work. Use `triage-theater` after proofing when the PoC
+needs to be human-operated, screen recorded, or attached as a clean reproduction
+kit. Use `report-writer` after proofing when the user needs a bounty submission,
+advisory draft, internal triage report, or remediation handoff.

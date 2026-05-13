@@ -17,6 +17,7 @@ A Codex plugin to maximize the cyber capabilities of Codex, intended for verifie
 - `fuzz-harness-builder`: Build and triage fuzz harnesses only when the target justifies long-running fuzzing value.
 - `finding-tracker`: Maintain centralized finding state, duplicate checks, milestones, related IDs, and proof references.
 - `triage-verifier`: Reproduce, prove, or de-escalate confident findings before anything becomes `proofed`.
+- `triage-theater`: Convert proofed verifier PoCs into step-based, screen-recordable human reproduction kits.
 - `exploit-chain-analysis`: Combine findings and de-escalated leads into higher-impact, trackable, verifiable exploit chains.
 - `report-writer`: Turn proofed findings, evidence, attachments, and Mermaid diagrams into submission-ready reports.
 

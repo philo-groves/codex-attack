@@ -91,7 +91,7 @@ In scope: <allowed systems, code paths, vulnerability classes, techniques>
 Out of scope: <systems, data, techniques, timing, impact limits>
 Objective: <review, reproduce, fuzz, reverse, debug, research, report>
 Impact tolerance: <read-only, local-only, low-rate live testing, invasive lab testing>
-Deliverable: <findings, patch, PoC-in-lab, harness, threat model, report>
+Deliverable: <findings, patch, PoC-in-lab, human PoC kit, harness, threat model, report>
 Next skill: <specialized skill>
 ```
 
@@ -110,6 +110,7 @@ Route to one primary skill. Mention secondary skills only when they are likely t
 - Use `binary-debugging` for runtime inspection, crash triage, debugger workflows, memory state, symbols, and dynamic behavior.
 - Use `binary-reversing` for static analysis, disassembly, decompilation, binary structure, protocols, and undocumented behavior.
 - Use `exploit-chain-analysis` for authorized lab-only proof of exploitability, chaining multiple validated findings, risk demonstration, and report evidence.
+- Use `triage-theater` for proofed findings that need human-operated, screen-recordable PoC packages or submission attachments.
 
 ## Question Style
 
