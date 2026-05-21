@@ -5,12 +5,9 @@
   "author": {
     "name": "Codex ATTACK Contributors"
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/philo-groves/codex-attack.git"
-  },
   "homepage": "https://github.com/philo-groves/codex-attack",
+  "repository": "https://github.com/philo-groves/codex-attack",
+  "license": "MIT",
   "keywords": [
     "codex",
     "attack",
@@ -27,18 +24,17 @@
   "interface": {
     "displayName": "Codex ATTACK",
     "shortDescription": "Advanced cyber research workflows for TAC members",
-    "longDescription": "Codex ATTACK packages skills for scoped security engagements: scope modeling, source and web review, CVE research, binary reversing and debugging, selective fuzz harnessing, finding tracking, triage verification, human-friendly PoC packaging, exploit-chain analysis, and report writing. Use only on authorized targets with Trusted Access for Cyber permissions.",
+    "longDescription": "Codex ATTACK packages skills for scoped security engagements: scope modeling, source and web review, CVE research, binary reversing and debugging, selective fuzz harnessing, finding tracking, in-agent-browser HTML session monitoring, triage verification, exploit-chain analysis, and report writing.\n\nUse only on authorized targets with Trusted Access for Cyber permissions.",
     "developerName": "Codex ATTACK Contributors",
     "category": "Security",
     "capabilities": [
-      "Interactive",
       "Read",
       "Write"
     ],
     "defaultPrompt": [
       "Establish scope and review this target.",
       "Perform chain analysis of known findings.",
-      "Build a screen-recordable PoC kit from a proofed finding.",
+      "Launch an HTML session monitor while reviewing findings.",
       "Write a submission-ready report."
     ],
     "brandColor": "#B91C1C",
