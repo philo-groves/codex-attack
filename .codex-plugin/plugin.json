@@ -5,7 +5,12 @@
   "author": {
     "name": "Codex ATTACK Contributors"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philo-groves/codex-attack.git"
+  },
+  "homepage": "https://github.com/philo-groves/codex-attack",
   "keywords": [
     "codex",
     "attack",
