@@ -21,6 +21,22 @@ A Codex plugin to maximize the cyber capabilities of Codex, intended for verifie
 - `exploit-chain-analysis`: Combine findings and de-escalated leads into higher-impact, trackable, verifiable exploit chains.
 - `report-writer`: Turn proofed findings, evidence, attachments, and Mermaid diagrams into submission-ready reports.
 
+## Lifecycle Hooks
+
+Codex ATTACK includes lightweight lifecycle hooks for continuity during long
+security workflows. They do not block prompts, deny tool calls, or force extra
+turns. Instead, they keep shared context visible across session starts,
+compaction, and subagent handoffs.
+
+- `SessionStart`: surfaces existing scope, finding-tracker, and goal artifacts.
+- `PreCompact` / `PostCompact`: writes compact checkpoints under
+  `data/.codex-attack/hooks/` when workspace artifacts exist.
+- `SubagentStart` / `SubagentStop`: passes tracker context into subagents and
+  records handoff notes.
+
+Codex auto-discovers the bundled hook config at `hooks/hooks.json` after the
+plugin is installed and the hooks are trusted.
+
 ## How to Install
 
 1. Clone this repository

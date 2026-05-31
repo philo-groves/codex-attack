@@ -1,0 +1,74 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/codex_attack_context.py\" session-start",
+            "commandWindows": "py -3 \"%PLUGIN_ROOT%\\hooks\\codex_attack_context.py\" session-start",
+            "timeout": 10,
+            "statusMessage": "Loading Codex ATTACK context"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/codex_attack_context.py\" pre-compact",
+            "commandWindows": "py -3 \"%PLUGIN_ROOT%\\hooks\\codex_attack_context.py\" pre-compact",
+            "timeout": 10,
+            "statusMessage": "Saving Codex ATTACK checkpoint"
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/codex_attack_context.py\" post-compact",
+            "commandWindows": "py -3 \"%PLUGIN_ROOT%\\hooks\\codex_attack_context.py\" post-compact",
+            "timeout": 10,
+            "statusMessage": "Updating Codex ATTACK checkpoint"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/codex_attack_context.py\" subagent-start",
+            "commandWindows": "py -3 \"%PLUGIN_ROOT%\\hooks\\codex_attack_context.py\" subagent-start",
+            "timeout": 10,
+            "statusMessage": "Passing Codex ATTACK context"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$PLUGIN_ROOT/hooks/codex_attack_context.py\" subagent-stop",
+            "commandWindows": "py -3 \"%PLUGIN_ROOT%\\hooks\\codex_attack_context.py\" subagent-stop",
+            "timeout": 10,
+            "statusMessage": "Recording Codex ATTACK handoff"
+          }
+        ]
+      }
+    ]
+  }
+}
