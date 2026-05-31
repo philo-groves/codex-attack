@@ -28,11 +28,17 @@ security workflows. They do not block prompts, deny tool calls, or force extra
 turns. Instead, they keep shared context visible across session starts,
 compaction, and subagent handoffs.
 
-- `SessionStart`: surfaces existing scope, finding-tracker, and goal artifacts.
+- `SessionStart`: surfaces existing scope, finding-tracker, and per-goal
+  artifacts.
 - `PreCompact` / `PostCompact`: writes compact checkpoints under
   `data/.codex-attack/hooks/` when workspace artifacts exist.
-- `SubagentStart` / `SubagentStop`: passes tracker context into subagents and
-  records handoff notes.
+- `SubagentStart` / `SubagentStop`: passes tracker and per-goal context into
+  subagents and records handoff notes.
+
+Goal artifacts should live under one top-level `goal/` directory with a unique
+ID per goal, such as `goal/pragma-elevation/recon/`,
+`goal/pragma-elevation/modeling/`, `goal/pragma-elevation/proofing/`, and
+`goal/pragma-elevation/reports/`.
 
 Codex auto-discovers the bundled hook config at `hooks/hooks.json` after the
 plugin is installed and the hooks are trusted.

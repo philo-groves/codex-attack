@@ -141,19 +141,49 @@ def summarize_scope(workspace: Path) -> dict[str, Any]:
 def summarize_goal_files(workspace: Path) -> dict[str, Any]:
     goal_dir = workspace / "goal"
     if not goal_dir.is_dir():
-        return {"exists": False, "recent_files": []}
+        return {"exists": False, "goals": [], "legacy_files": []}
 
     suffixes = {".md", ".txt", ".json", ".yaml", ".yml"}
-    files = [
+    goal_roots = [
         path
-        for path in goal_dir.rglob("*")
+        for path in goal_dir.iterdir()
+        if path.is_dir() and not path.name.startswith(".")
+    ]
+    goal_summaries = []
+    for root in goal_roots:
+        files = [
+            path
+            for path in root.rglob("*")
+            if path.is_file() and path.suffix.lower() in suffixes
+        ]
+        files.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+        latest = files[0].stat().st_mtime if files else root.stat().st_mtime
+        goal_summaries.append(
+            {
+                "id": root.name,
+                "path": short_path(root, workspace),
+                "latest_mtime": latest,
+                "recent_files": [
+                    short_path(path, workspace)
+                    for path in files[:MAX_RECENT_GOAL_FILES]
+                ],
+            }
+        )
+
+    legacy_files = [
+        path
+        for path in goal_dir.iterdir()
         if path.is_file() and path.suffix.lower() in suffixes
     ]
-    files.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+    legacy_files.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+    goal_summaries.sort(key=lambda item: item["latest_mtime"], reverse=True)
+
     return {
         "exists": True,
-        "recent_files": [
-            short_path(path, workspace) for path in files[:MAX_RECENT_GOAL_FILES]
+        "goals": goal_summaries[:4],
+        "legacy_files": [
+            short_path(path, workspace)
+            for path in legacy_files[:MAX_RECENT_GOAL_FILES]
         ],
     }
 
@@ -211,11 +241,27 @@ def summary_lines(summary: dict[str, Any], *, for_subagent: bool = False) -> lis
         lines.append(f"- Finding tracker: not initialized ({findings.get('path')})")
 
     if goal.get("exists"):
-        recent = goal.get("recent_files") or []
-        if recent:
-            lines.append(f"- Recent goal artifacts: {', '.join(recent)}")
+        goals = goal.get("goals") or []
+        if goals:
+            lines.append("- Goal artifacts:")
+            for item in goals:
+                recent = item.get("recent_files") or []
+                if recent:
+                    lines.append(
+                        f"  - {item.get('id')}: {', '.join(recent)}"
+                    )
+                else:
+                    lines.append(f"  - {item.get('id')}: {item.get('path')}")
         else:
-            lines.append("- Goal directory exists but has no summary artifacts yet")
+            lines.append(
+                "- Goal directory exists but no per-goal subdirectories were found"
+            )
+        legacy_files = goal.get("legacy_files") or []
+        if legacy_files:
+            lines.append(
+                "- Goal root files not under a goal ID: "
+                f"{', '.join(legacy_files)}"
+            )
 
     if for_subagent:
         lines.extend(

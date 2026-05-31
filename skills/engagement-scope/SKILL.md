@@ -99,6 +99,84 @@ Use `unknown` sparingly. If an unknown affects safety or execution, ask before p
 
 When scope comes from a public bounty program, include exact asset identifiers or rule text summaries. Do not collapse a precise target list into a broad phrase like "company assets" unless the official program explicitly defines an open scope.
 
+## Goal Support
+
+Use Codex goals for long-running, multi-turn security work that has a concrete
+finish line and benefits from autonomous continuation across context compaction,
+subagents, or several work phases. Keep goal use general: do not maintain narrow
+campaign-specific templates. Scope each goal from the engagement brief and the
+user's current objective.
+
+Use a goal when the work is too large for one normal turn but still bounded, for
+example: review one subsystem, validate one vulnerability class across a defined
+target, investigate one crash family, prove or de-escalate one exploit-chain
+hypothesis, or produce one report package. Do not start a goal for quick
+questions, one-off edits, simple lookups, or work whose target, deliverable, or
+stopping condition is still vague.
+
+Codex supports only one active goal per session. Before planning or starting a
+new goal, check the current goal state with `get_goal` when that tool is
+available. If a goal is already active, do not create a competing plan or start a
+second goal. Instead, continue the active goal, explicitly connect the user's
+new request to it, or explain that the current goal needs to be completed or
+blocked before a new goal can begin.
+
+Good goal scope has:
+
+- One target boundary: repository, app, binary, package, component, workflow, or
+  finding ID.
+- One primary objective: discover, validate, reproduce, proof, fix, or report.
+- A clear completion condition that can be marked done without open-ended
+  exploration.
+- Explicit non-goals for adjacent systems, vulnerability classes, exploit-chain
+  branches, or report polish that would make the run sprawl.
+- A practical time, turn, token, or evidence budget when the user supplied one
+  or the work could otherwise run too long.
+- A handoff path through `finding-tracker`, `triage-verifier`, or
+  `report-writer` when those state transitions are in play.
+
+Use one top-level `goal/` directory in the active target workspace. Each goal
+gets a unique lower-case slug ID and its own subdirectory:
+
+```text
+goal/
+  <goal-id>/
+    recon/
+    modeling/
+    proofing/
+    reports/
+```
+
+Examples: `goal/pragma-elevation/recon/`, `goal/stripe-context-loss/modeling/`,
+or `goal/avatar-import-ssrf/proofing/`. Do not create shared directories such
+as `goal/recon/` or multiple top-level goal roots. Put the goal brief,
+checkpoints, notes, and generated artifacts under the current
+`goal/<goal-id>/` tree.
+
+Use the helper script to create the directory tree after the active-goal check
+passes and the user has agreed to the bounded goal:
+
+```bash
+python <skill-dir>/scripts/goal_workspace.py \
+  --goal-id pragma-elevation \
+  --objective "Validate whether the sudo helper permits local elevation." \
+  --target "repo tools/sudo-helper and its tests" \
+  --completion "Finding is proofed, de-escalated, or fixed with regression tests." \
+  --non-goal "Review unrelated privilege boundaries"
+```
+
+When proposing a goal, include:
+
+```text
+Goal ID: <slug>
+Objective: <single bounded outcome>
+Target boundary: <exact target>
+Completion condition: <what makes the goal complete>
+Non-goals: <what is intentionally excluded>
+Artifact root: goal/<goal-id>/
+Active-goal check: <none active / existing goal to continue>
+```
+
 ## Routing
 
 Route to one primary skill. Mention secondary skills only when they are likely to be needed later.
