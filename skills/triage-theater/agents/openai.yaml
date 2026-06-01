@@ -1,4 +1,0 @@
-interface:
-  display_name: "Triage Theater"
-  short_description: "Build human-friendly PoC kits."
-  default_prompt: "Use $triage-theater after triage-verifier has proofed a finding to turn the agent-focused PoC into step-based, screen-recordable human reproduction artifacts."

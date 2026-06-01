@@ -1,13 +1,13 @@
 ---
 name: report-writer
-description: Write submission-ready vulnerability reports, advisory drafts, bounty reports, disclosure notes, remediation summaries, and attachment bundles from proofed findings and verifier evidence. Use when Codex needs to turn finding-tracker IDs, triage-verifier proof packets, triage-theater human PoC kits, exploit-chain packets, screenshots, requests, logs, CVE/CWE/CVSS data, or Mermaid diagrams into a concise report for HackerOne, Bugcrowd, GitHub Security Advisories, coordinated disclosure, internal triage, or remediation handoff.
+description: Write submission-ready vulnerability reports, advisory drafts, bounty reports, disclosure notes, remediation summaries, and attachment bundles from proofed findings and verifier evidence. Use when Codex needs to turn finding-tracker IDs, triage-verifier proof packets, auto-triage human PoC kits, exploit-chain packets, screenshots, requests, logs, CVE/CWE/CVSS data, or Mermaid diagrams into a concise report for HackerOne, Bugcrowd, GitHub Security Advisories, coordinated disclosure, internal triage, or remediation handoff.
 ---
 
 # Report Writer
 
 Use this skill after `triage-verifier` has accepted a finding as `proofed`, or
 when the user explicitly asks for a draft report from strong evidence. Prefer
-`triage-theater` artifacts when available for human reproduction steps,
+`auto-triage` artifacts when available for human reproduction steps,
 screen-recording flow, and screenshots. Reports must be accurate, reproducible,
 scoped, redacted, and tailored to the receiving program. Do not submit or imply
 certainty for unverified findings.
@@ -87,7 +87,7 @@ image so the diagram is reviewable and diffable.
 
 1. Load the finding from `finding-tracker`. Prefer `proofed`; if not proofed,
    label the draft clearly as unsubmitted/internal and identify proof gaps.
-2. Load proof material: `triage-verifier` packet, `triage-theater` package,
+2. Load proof material: `triage-verifier` packet, `auto-triage` package,
    exploit-chain packet, screenshots, request/response pairs, logs, crash
    traces, minimized inputs, code lines, CVE research, and affected-version
    evidence.
@@ -99,7 +99,7 @@ image so the diagram is reviewable and diffable.
 5. Write a strong title: vulnerability class + affected function/asset + impact.
 6. Summarize in one short paragraph. State actor, precondition, primitive, and
    impact without hype.
-7. Write deterministic reproduction steps. Prefer the `triage-theater` human
+7. Write deterministic reproduction steps. Prefer the `auto-triage` human
    flow when available. Include accounts/roles, URLs, versions/builds, commands,
    request bodies, expected vs actual behavior, screenshots, and cleanup.
 8. Explain impact with evidence. Connect the proof to confidentiality,
@@ -180,7 +180,7 @@ Before finalizing, check:
 
 - A triager can reproduce or understand the proof without asking for missing
   setup.
-- Human PoC steps and screenshots come from `triage-theater` when that package
+- Human PoC steps and screenshots come from `auto-triage` when that package
   exists, while proof claims still trace back to `triage-verifier`.
 - The report shows why the issue is security-relevant, not merely unusual
   behavior.
@@ -208,7 +208,7 @@ Remaining gaps: <none or exact fields>
 ## Handoff
 
 Use `finding-tracker` for state and proof references, `triage-verifier` for
-proof quality, `triage-theater` for human-operated PoC packages and screenshots,
+proof quality, `auto-triage` for human-operated PoC packages and screenshots,
 `exploit-chain-analysis` for chain diagrams and chain impact, `cve-research` for
 advisory/CVE metadata, and `engagement-scope` for program policy and disclosure
 constraints.

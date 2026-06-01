@@ -109,7 +109,7 @@ If verification fails, add a milestone or de-escalate instead of forcing
    changes when the guard, patch, owner, tenant, role, config, or input changes.
 6. Rewrite the PoC for verification. Make it minimal, deterministic, redacted,
    scoped, and self-checking. Leave screen-recordable human packaging to
-   `triage-theater` after proofing.
+   `auto-triage` after proofing.
 7. For exploit chains, prove the composition: show each link's precondition,
    primitive, postcondition, and the exact point where one link feeds the next.
 8. Decide outcome. Proof, return for more work, de-escalate, merge, or split.
@@ -200,7 +200,7 @@ Impact: <validated impact and limits>
 PoC quality: <passable / rewritten / still weak, with reason>
 Proof reference: <path or verifier artifact, if proofed>
 Tracker update: <state/milestone update performed or needed>
-Next action: <none / triage-theater / return to skill / patch / report / de-escalate>
+Next action: <none / auto-triage / return to skill / patch / report / de-escalate>
 ```
 
 Keep proof packets and final reports concise, redacted, and reproducible.
@@ -212,7 +212,7 @@ Use `finding-tracker` to update state and milestones. Return to
 `binary-reversing`, `fuzz-harness-builder`, or `cve-research` when verification
 finds a specific missing proof element. Use `exploit-chain-analysis` when a
 chain proof fails because composition, impact escalation, or related-finding
-structure needs more work. Use `triage-theater` after proofing when the PoC
+structure needs more work. Use `auto-triage` after proofing when the PoC
 needs to be human-operated, screen recorded, or attached as a clean reproduction
 kit. Use `report-writer` after proofing when the user needs a bounty submission,
 advisory draft, internal triage report, or remediation handoff.

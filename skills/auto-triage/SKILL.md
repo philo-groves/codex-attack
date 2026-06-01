@@ -1,12 +1,12 @@
 ---
-name: triage-theater
+name: auto-triage
 description: Build human-friendly, screen-recordable proof-of-concept reproduction kits from already proofed triage-verifier evidence. Use after triage-verifier accepts a finding as proofed, or when Codex needs to turn an agent-focused PoC, proof packet, request log, crash repro, or verifier artifact into direct step-based human reproduction artifacts for bounty triagers, researchers, auditors, or screen recordings.
 ---
 
-# Triage Theater
+# Auto Triage
 
 Use this skill after `triage-verifier` has already accepted the finding as
-`proofed`. The verifier proves that the issue is real. Triage theater turns that
+`proofed`. The verifier proves that the issue is real. Auto-triage turns that
 proof into a human-operated demo that is easy to screen record, inspect, and
 submit without making triagers feel like the PoC hides the vulnerable action
 inside a complicated harness.
@@ -33,7 +33,7 @@ Create a PoC package that a human can run step by step:
 Place output under a human-readable slug, not a finding ID:
 
 ```text
-data/triage-theater/<short-vulnerability-slug>/
+data/auto-triage/<short-vulnerability-slug>/
   steps.md
   screenshots/
   requests/
@@ -79,7 +79,7 @@ the files directly.
 
 ## Human PoC Standards
 
-A good triage-theater package:
+A good auto-triage package:
 
 - Lets the human see and trigger the vulnerable operation directly.
 - Uses the fewest layers possible between the human and the vulnerable endpoint,
@@ -155,7 +155,7 @@ focus on the cleanest human reproduction path.
 ## Output Format
 
 ```text
-Triage theater package: <path>
+Auto-triage package: <path>
 Human flow: <direct request / UI workflow / command / crash input / project>
 Primary trigger: <the exact visible action>
 Screenshots: <captured count and pending count>

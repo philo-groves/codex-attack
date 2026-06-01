@@ -192,7 +192,7 @@ Route to one primary skill. Mention secondary skills only when they are likely t
   Route there only after the engagement brief is clear enough to split the work
   into bounded independent assignments.
 - Use `exploit-chain-analysis` for authorized lab-only proof of exploitability, chaining multiple validated findings, risk demonstration, and report evidence.
-- Use `triage-theater` for proofed findings that need human-operated, screen-recordable PoC packages or submission attachments.
+- Use `auto-triage` for proofed findings that need human-operated, screen-recordable PoC packages or submission attachments.
 
 ## Question Style
 

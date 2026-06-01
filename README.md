@@ -18,7 +18,7 @@ A Codex plugin to maximize the cyber capabilities of Codex, intended for verifie
 - `finding-tracker`: Maintain centralized finding state, duplicate checks, milestones, related IDs, and proof references.
 - `subagent-orchestration`: Coordinate explicit multi-agent workflows with mapper, auditor, debater, deduper, prover, and reporter roles.
 - `triage-verifier`: Reproduce, prove, or de-escalate confident findings before anything becomes `proofed`.
-- `triage-theater`: Convert proofed verifier PoCs into step-based, screen-recordable human reproduction kits.
+- `auto-triage`: Convert proofed verifier PoCs into step-based, screen-recordable human reproduction kits.
 - `exploit-chain-analysis`: Combine findings and de-escalated leads into higher-impact, trackable, verifiable exploit chains.
 - `report-writer`: Turn proofed findings, evidence, attachments, and Mermaid diagrams into submission-ready reports.
 
