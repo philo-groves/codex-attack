@@ -1,0 +1,4 @@
+interface:
+  display_name: "Subagent Orchestration"
+  short_description: "Coordinate multi-agent security work."
+  default_prompt: "Use $subagent-orchestration to plan and synthesize an authorized multi-agent security workflow with auditors, debaters, deduplication, and proof handoffs."

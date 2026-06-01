@@ -187,6 +187,10 @@ Route to one primary skill. Mention secondary skills only when they are likely t
 - Use `fuzz-harness-builder` for parser, protocol, API, CLI, library, or file-format fuzzing and deterministic test harnesses.
 - Use `binary-debugging` for runtime inspection, crash triage, debugger workflows, memory state, symbols, and dynamic behavior.
 - Use `binary-reversing` for static analysis, disassembly, decompilation, binary structure, protocols, and undocumented behavior.
+- Use `subagent-orchestration` when the user explicitly asks for subagents,
+  delegation, parallel agents, debate, or staged multi-agent security work.
+  Route there only after the engagement brief is clear enough to split the work
+  into bounded independent assignments.
 - Use `exploit-chain-analysis` for authorized lab-only proof of exploitability, chaining multiple validated findings, risk demonstration, and report evidence.
 - Use `triage-theater` for proofed findings that need human-operated, screen-recordable PoC packages or submission attachments.
 

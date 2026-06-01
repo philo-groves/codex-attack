@@ -16,6 +16,7 @@ A Codex plugin to maximize the cyber capabilities of Codex, intended for verifie
 - `binary-reversing`: Recover security-relevant behavior from binaries, firmware, formats, imports, strings, and decompilation.
 - `fuzz-harness-builder`: Build and triage fuzz harnesses only when the target justifies long-running fuzzing value.
 - `finding-tracker`: Maintain centralized finding state, duplicate checks, milestones, related IDs, and proof references.
+- `subagent-orchestration`: Coordinate explicit multi-agent workflows with mapper, auditor, debater, deduper, prover, and reporter roles.
 - `triage-verifier`: Reproduce, prove, or de-escalate confident findings before anything becomes `proofed`.
 - `triage-theater`: Convert proofed verifier PoCs into step-based, screen-recordable human reproduction kits.
 - `exploit-chain-analysis`: Combine findings and de-escalated leads into higher-impact, trackable, verifiable exploit chains.

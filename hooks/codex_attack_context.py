@@ -266,6 +266,7 @@ def summary_lines(summary: dict[str, Any], *, for_subagent: bool = False) -> lis
     if for_subagent:
         lines.extend(
             [
+                "- If your prompt references a subagent assignment packet, honor its role, target slice, write ownership, and stop criteria.",
                 "- Before adding new security findings, search the tracker for duplicates.",
                 "- Record meaningful evidence changes as milestones for handoff.",
                 "- Keep proof references tied to triage-verifier output.",

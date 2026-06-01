@@ -115,6 +115,12 @@ If verification fails, add a milestone or de-escalate instead of forcing
 8. Decide outcome. Proof, return for more work, de-escalate, merge, or split.
 9. Update `finding-tracker` with proof reference, milestone, or de-escalation.
 
+If the user explicitly asks for multi-agent verification, use
+`subagent-orchestration` before the final verifier decision. Assign debaters to
+try to refute specific proof elements and provers to prepare bounded artifacts,
+but keep the final `proofed`, `needs-more-work`, `de-escalated`, or
+`split-or-duplicate` decision in this skill.
+
 ## Verifier PoC Standards
 
 A passable verifier PoC should:
