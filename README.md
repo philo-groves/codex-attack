@@ -46,11 +46,18 @@ plugin is installed and the hooks are trusted.
 
 ## How to Install
 
-1. Clone this repository
-2. Copy its content into ~/.codex/plugins/cache/codex-local/codex-attack
-3. Restart Codex
-4. Start a new thread and ask Codex to use the codex-attack plugin
-5. Done. The plugin will be enabled across sessions
+Install through the Codex plugin marketplace flow:
+
+1. Open Codex Plugins > Add more.
+2. Add this Git repository as a marketplace source:
+
+   ```
+   https://github.com/philo-groves/codex-attack.git
+   ```
+
+3. Install `codex-attack` from that marketplace source.
+4. Start a new thread and ask Codex to use the codex-attack plugin.
+5. Done. The plugin will be enabled across sessions.
 
 ## How to Disable
 
